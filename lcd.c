@@ -1,18 +1,4 @@
-/*
- * LCD.cpp
- *
- * Created: 09/02/2020 17:54:14
- * Author : WillNunnes
- */ 
-
-#include <avr/io.h>
-#define F_CPU 16000000UL
-#include <util/delay.h>
-
-#define LCD_PORT PORTD
-#define LCD_DDR DDRD
-#define RS 2
-#define EN 3
+#include "lcd.h"
 
 void send_cmd(unsigned char cmd) {
 	LCD_PORT = (LCD_PORT & 0x0F) | (cmd & 0xF0);
@@ -76,13 +62,27 @@ void print(char *str) {
 	}
 }
 
-int main(void)
-{
-	char str[] = "Wilton Nunes";
-	lcd_init();
-	
-	send_data(0x39);
-	
-    while (1);
-	return 0;
+void write_digit(unsigned char value) {
+	send_data(value + 0x30);
+}
+
+void write_int(int value) {
+	int remainder = value;
+	if(remainder >= 10000) {
+		write_digit(value / 10000);
+		remainder = value % 10000;
+	}
+	if(remainder >= 1000 || value >= 10000) {
+		write_digit(remainder / 1000);
+		remainder %= 1000;
+	}
+	if(remainder >= 100 || value >= 10000) {
+		write_digit(remainder / 100);
+		remainder %= 100;
+	}
+	if(remainder >= 10 || value >= 10000) {
+		write_digit(remainder / 10);
+		remainder %= 10;
+	}
+	write_digit(remainder);
 }
