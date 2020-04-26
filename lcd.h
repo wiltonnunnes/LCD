@@ -13,4 +13,4 @@ void send_data(unsigned char data);
 void set_cursor(unsigned char, unsigned char);
 void print(char *str);
 void write_digit(unsigned char);
-void write_int(int);
+void write_number(int);

@@ -3,7 +3,7 @@
 int main() {
 	lcd_init();
 
-	print("Hello");
+	write_number(10200);
 	
 	while(1);
 	return 0;

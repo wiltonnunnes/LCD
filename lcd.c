@@ -66,23 +66,41 @@ void write_digit(unsigned char value) {
 	send_data(value + 0x30);
 }
 
-void write_int(int value) {
-	int remainder = value;
-	if(remainder >= 10000) {
-		write_digit(value / 10000);
-		remainder = value % 10000;
+void write_number(int x) {
+	if(x < 0) {
+		send_data('-');
+		x = abs(x);
 	}
-	if(remainder >= 1000 || value >= 10000) {
-		write_digit(remainder / 1000);
-		remainder %= 1000;
+
+	if(x > 9999) {
+		write_digit(x / 10000);
+
+		int r = x % 10000;
+		if(r < 1000)
+			write_digit(0);
+		if(r < 100)
+			write_digit(0);
+		write_number(r);
 	}
-	if(remainder >= 100 || value >= 10000) {
-		write_digit(remainder / 100);
-		remainder %= 100;
+
+	if(x > 999 && x <= 9999) {
+		write_digit(x / 1000);
+
+		int r = x % 1000;
+		if(r < 100)
+			write_digit(0);
+
+		write_number(r);
 	}
-	if(remainder >= 10 || value >= 10000) {
-		write_digit(remainder / 10);
-		remainder %= 10;
+
+	if(x > 99 && x <= 999) {
+		write_digit(x / 100);
+		write_number(x % 100);
 	}
-	write_digit(remainder);
+	
+	if(x <= 99){
+		write_digit(x / 10);
+		write_digit(x % 10);
+	}
 }
+
